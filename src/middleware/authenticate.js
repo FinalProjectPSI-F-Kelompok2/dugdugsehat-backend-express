@@ -1,25 +1,18 @@
-const express = require('express');
 const jwt = require('jsonwebtoken');
 
 const authenticate = (req, res, next) => {
   try {
     const requestToken = (req.headers['Authorization'.toLowerCase()]);
-    if (!requestToken) {
-      res.status(403);
-      res.json({
-        success: false,
-        message: "Invalid or unknown token."
-      })
-      return;
-    }
+    if (!requestToken) throw new Error("Invalid or unknown token.")
     // Perform routes when authenticated
     const jwtResult = jwt.verify(requestToken.slice('Bearer '.length), process.env.TOKEN_SECRET);
+    res.locals.jwt = jwtResult;
     next()
-  } catch (_) {
+  } catch (err) {
     res.status(403);
     res.json({
       success: false,
-      message: "Invalid or unknown token."
+      message: err.message
     })
     return;
   }

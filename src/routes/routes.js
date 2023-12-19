@@ -6,7 +6,7 @@ const log = require('../middleware/logger');
 // Controller imports
 const { login, register } = require('../controllers/profile');
 const authenticate = require('../middleware/authenticate');
-const { getHistory } = require('../controllers/health');
+const { getHistory, saveHistory } = require('../controllers/health');
 
 function ping(_, res) {
   res.send('Pong');
@@ -25,6 +25,7 @@ app.post('/login', login);
 app.post('/register', register);
 
 // Health Data
-app.get('/history', authenticate, getHistory);
+app.get('/health', authenticate, getHistory);
+app.post('/health', authenticate, saveHistory);
 
 module.exports = app;

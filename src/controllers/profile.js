@@ -38,8 +38,21 @@ async function login(req, res) {
 
 async function register(req, res) {
   const { email, name, password } = req.body;
+  const user = await prisma.user.findUnique({
+    where: {
+      email: email
+    }
+  });
+  if (user) {
+    res.status(409);
+    res.json({
+      success: false,
+      message: "Users has exist."
+    });
+    return;
+  }
   const hashedPwd = await encryptor.encryptPassword(password);
-  const user = await prisma.user.create({
+  const newUser = await prisma.user.create({
     data: {
       email: email,
       password: hashedPwd,
@@ -52,7 +65,8 @@ async function register(req, res) {
   })
   res.status((user) ? 200 : 503);
   res.json({
-    'success': user != undefined
+    success: newUser != undefined,
+    message: "Register success."
   })
 }
 

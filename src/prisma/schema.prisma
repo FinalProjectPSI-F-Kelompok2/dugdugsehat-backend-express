@@ -21,24 +21,26 @@ model User {
 
 model Profile {
   user_id     Int      @unique
-  user        User     @relation(fields: [user_id], references: [id])
   name        String
   body_height Int?
   body_weight Int?
   age         Int?
   sex         Boolean?
+  user        User     @relation(fields: [user_id], references: [id])
 }
 
 model HealthData {
-  user            User        @relation(fields: [user_id], references: [id])
-  user_id         Int         @id
+  id              Int         @id @default(autoincrement())
+  user_id         Int
+  measure_date    DateTime
   measure_type_id Int
-  measure_type    MeasureType @relation(fields: [measure_type_id], references: [id])
   value           Int
+  user            User        @relation(fields: [user_id], references: [id])
+  measure_type    MeasureType @relation(fields: [measure_type_id], references: [id])
 }
 
 model MeasureType {
-  id          Int          @id @default(autoincrement())
+  id          Int          @id
   name        String       @unique
   health_data HealthData[]
 }
